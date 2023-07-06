@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>C++ Code Example</title>
+    <!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script> -->
+</head>
+
+<body>
+    
+    <pre>
+    <code class="cpp">
+    
+    <h1>CODE 5</h1><br>
+      #include&lt;iostream&gt;
+        #include&lt;fstream&gt;
+        #include&lt;stdlib.h&gt;
+        #include&lt;string.h&gt;
+        
+        using namespace std;
+        
+        class student {
+        public:
+          char ind[5],usn[5],name[15],age[5],sem[5],branch[15];
+                }
+        stdrec[20];
+        int no;
+        
+        int get_num_records()
+        {
+        int I=0;
+        fstream file2;
+        file2.open("record.txt",ios::in);
+        if(!file2)
+         {
+          return 0;
+         }
+          while(!file2.fail()) 
+           {
+           file2.getline(stdrec[I].ind,5,'|');
+           file2.getline(stdrec[I].usn,5,'|');
+           file2.getline(stdrec[I].name,15,'|');
+           file2.getline(stdrec[I].age,5,'|');
+           file2.getline(stdrec[I].sem,5,'|');
+           file2.getline(stdrec[I].branch,15,'\n');
+           I++; 	
+           }
+           I--;
+          file2.close();
+          return I;
+        }
+        
+        void retrieve_details(char st_no[])
+        {
+         no = get_num_records();
+         for(int i=0;i&lt;no;i++)
+          {
+           if(strcmp(stdrec[i].ind,st_no)==0) 
+           {
+            cout&lt;&lt;"\n\n"&lt;&lt;"Student details : ";
+            cout&lt;&lt;"\nUSN    :"&lt;&lt;stdrec[i].usn&lt;&lt;"\n Name   :"&lt;&lt;stdrec[i].name&lt;&lt;"\n Age  :" &lt;&lt;stdrec[i].age&lt;&lt;"\n Sem    :"&lt;&lt; stdrec[i].sem&lt;&lt;"\n    Branch :"&lt;&lt;stdrec[i].branch&lt;&lt;"\n";
+           break;
+          }
+           }
+        }
+        
+        
+        void add_record()
+        {
+        char buf1[100],buf2[20];
+        fstream file1,file2;
+        int I,cnt;
+        student s;
+        cnt=get_num_records();
+        file1.open("index.txt",ios::out|ios::app);
+        if(!file1)
+          {
+           cout&lt;&lt;"\nError !\n";
+           exit(0);
+           }
+         file2.open("record.txt",ios::out|ios::app);
+          if(!file2)
+          {
+            cout&lt;&lt;"\nError !\n";
+            exit(0);
+          }
+        
+          cout&lt;&lt;"\nEnter the no. of students : ";
+          cin>>no;
+          cout&lt;&lt;"\nEnter the details :\n"; 
+          for(I=cnt; I&lt;(cnt+no); I++)
+           {                  
+            cout&lt;&lt;"\nName : ";
+            cin>>s.name;
+            cout&lt;&lt;"\nAge : ";
+            cin>>s.age;
+            cout&lt;&lt;"\nUSN : ";
+            cin>>s.usn;
+            cout&lt;&lt;"\nSemester : ";
+            cin>>s.sem;
+            cout&lt;&lt;"\nBranch : ";
+            cin>>s.branch;
+            sprintf(buf2,"%s|%d\n",s.usn,I);
+            file1&lt;&lt;buf2;
+            sprintf(buf1,"%d|%s|%s|%s|%s|%s\n",I,s.usn,s.name,s.age,s.sem,s.branch);
+            file2&lt;&lt;buf1;
+          }
+            file1.close();
+            file2.close();
+        }
+        
+        void search_record()
+        {
+        int I,flag1;
+        char st_no[5],st_usn[5],rt_usn[5];
+        fstream file1;
+          cout&lt;&lt;"\nPlease enter the USN of the student whose record is to be displayed\n";
+          cin>>st_usn;
+          file1.open("index.txt",ios::in); 
+          if(!file1)
+          {
+            cout&lt;&lt;"\nError !\n";
+            exit(0);
+          }
+          flag1=0;
+          while(!file1.eof())
+          {
+            file1.getline(rt_usn,5,'|');
+            file1.getline(st_no,5,'\n');    
+            if(strcmp(st_usn,rt_usn)==0)
+            {
+              retrieve_details(st_no);         
+              flag1=1;                  
+              break;
+            }
+          }
+          if(!flag1)
+          cout&lt;&lt;"\nRecord search failed !!\n"; 
+          file1.close();
+        }
+        
+        void delete_stdrecord(char usno[])
+        {
+        int I=0;
+        fstream file1,file2;
+        no = get_num_records();	
+        int flag=-1;
+         for(I=0;I&lt;no;I++)       
+          {
+            if(strcmp(stdrec[I].ind,usno)==0)
+            {
+              flag=I;
+              break;
+            }	
+        
+          }
+          if(flag==-1)                
+          {
+            cout&lt;&lt;"\nError !\n";
+            return;
+          }
+          if(flag==(no-1))            
+          {
+            no--;
+            cout&lt;&lt;"\nDeleted !\n";
+            
+          }
+          else
+          {
+            for(I=flag;I&lt;no;I++)
+            {
+              stdrec[I] = stdrec[I+1];
+            }
+            no--;
+            cout&lt;&lt;"\nDeleted !\n";
+          }
+        
+          file1.open("index.txt",ios::out);  
+          file2.open("record.txt",ios::out);  
+          for(I=0;I&lt;no;I++)                   
+          {                                   
+            file1&lt;&lt;stdrec[I].usn&lt;&lt;"|"&lt;&lt;I&lt;&lt;"\n";
+            file2&lt;&lt;I&lt;&lt;"|"&lt;&lt;stdrec[I].usn&lt;&lt;"|"&lt;&lt;stdrec[I].name &lt;&lt;"|"&lt;&lt;stdrec[I].age&lt;&lt;"|"&lt;&lt;stdrec[I].sem&lt;&lt;"|"&lt;&lt;stdrec[I].branch&lt;&lt;"\n";
+          }
+          file1.close();
+          file2.close();
+          return;
+        }
+        
+        
+        void delete_record()
+        {
+        int I,flag;
+        char st_no[5],st_usn[5],rt_usn[5];
+        fstream file1;
+          cout&lt;&lt;"\nPlease enter the USN of the student whose record is to be deleted\n";
+          cin>>st_usn;
+          file1.open("index.txt",ios::in);
+          if(!file1)
+          {
+            cout&lt;&lt;"\nError !\n";
+            exit(0);
+          }
+          flag=0;
+          while(!file1.eof())
+          {
+            file1.getline(rt_usn,5,'|');      
+            file1.getline(st_no,5,'\n');       
+            if(strcmp(st_usn,rt_usn)==0)
+            {
+              delete_stdrecord(st_no); 
+              flag=1;
+              break;
+            }
+          }
+          if(!flag)
+          cout&lt;&lt;"\nDeletion failed !\n"; 
+          file1.close();
+        }
+        
+        
+        void display_records()
+        {
+        fstream file2;
+        student s;
+        file2.open("record.txt",ios::in);
+        cout&lt;&lt;"\n\n"&lt;&lt;"Student details : \n";
+        cout&lt;&lt;"Index"&lt;&lt;"\t"&lt;&lt;"USN"&lt;&lt;"\t"&lt;&lt;"Name"&lt;&lt;"\t"&lt;&lt;"Age"&lt;&lt;"\t"&lt;&lt;"Sem"&lt;&lt;"\t"&lt;&lt;"Branch"&lt;&lt;"\t"&lt;&lt;endl; 
+          while(!file2.fail()) 
+           {
+            file2.getline(s.ind,5,'|');
+            file2.getline(s.usn,5,'|');
+            file2.getline(s.name,15,'|');
+            file2.getline(s.age,5,'|');
+            file2.getline(s.sem,5,'|');
+            file2.getline(s.branch,15,'\n');
+            cout&lt;&lt;s.ind&lt;&lt;"\t"&lt;&lt;s.usn&lt;&lt;"\t"&lt;&lt;s.name&lt;&lt;"\t"&lt;&lt;s.age&lt;&lt;"\t"&lt;&lt;s.sem&lt;&lt;"\t"&lt;&lt;s.branch&lt;&lt;"\n";
+          }
+         file2.close();
+        }
+        
+        
+        int main()
+        {
+        int ch;
+          for(;;)
+          {
+            cout&lt;&lt;"\nPlease choose :\n 1:Add Record\n 2:Search Record\n 3:Delete Record\n 4:Display Record\n";
+            cin>>ch;
+            switch(ch)
+            {
+              case 1: add_record(); break;
+              case 2: search_record(); break;
+              case 3: delete_record(); break;
+              case 4: display_records();break;
+              default: cout&lt;&lt;"\nInvalid choice !\n"; 
+                                        exit(0);	
+            }
+          }
+        }
+        
+        <h1>CODE 6</h1>
+        <br>
+        #include&lt;iostream&gt;
+        #include&lt;fstream&gt;
+        #include&lt;stdlib.h&gt;
+        #include&lt;string.h&gt;
+          using namespace std;
+          
+          class student
+          {
+          public: char name[15],usn[5],age[5],sem[5],branch[15];
+          }
+          stdrec[20],found[20];
+          char st_no[5],rt_name[20];
+          char findex[20][5];
+          
+          int get_num_records()
+          {
+          fstream file;
+          int i=0;
+            file.open("record.txt",ios::in);
+            if(!file)
+            {
+              return 0;	
+            }
+            while(!file.eof())
+            {	
+                file.getline(findex[i],5,'|');
+                file.getline(stdrec[i].usn,5,'|');
+                file.getline(stdrec[i].name,15,'|');
+                file.getline(stdrec[i].age,5,'|');
+                file.getline(stdrec[i].sem,5,'|');
+                file.getline(stdrec[i].branch,15,'\n'); 
+               i++;
+            }
+            i--;	
+            file.close();
+          return i;
+          }
+          
+          void retrieve_record(char* ind)
+          {
+           int i,no;
+           no=get_num_records();	
+          
+           for(i=0;i&lt;no;i++)
+           {	
+              if(strcmp(ind,findex[i])==0)
+            {
+                 cout&lt;&lt;"USN   : "&lt;&lt;stdrec[i].usn&lt;&lt;"\nName  : "&lt;&lt;stdrec[i].name&lt;&lt;"\nAge   : " &lt;&lt;stdrec[i].age&lt;&lt;"\nSem   :"&lt;&lt;stdrec[i].sem&lt;&lt;"\nBranch  :"&lt;&lt;stdrec[i].branch&lt;&lt;endl;
+            }
+           }
+           return;
+          }
+          
+          void search_records()
+          {
+           int k=0,i,no;
+           char name[15],usn[5],ind[5],chusn[5],resind[5][20];
+           fstream file;
+           file.open("secindex.txt",ios::in);
+           cout&lt;&lt;"Please enter the name of the student whose record is to be displayed\n";
+           cin>>rt_name;
+           while(!file.eof())
+           {
+            file.getline(name,15,'|');
+            file.getline(usn,5,'|');
+            file.getline(ind,5,'\n');
+            if(strcmp(name,rt_name)==0)
+            {
+             strcpy(found[k].name,name);
+             strcpy(found[k].usn,usn);
+             strcpy(resind[k],ind);
+             k++;  
+            }
+           }
+           file.close();
+           if(k==1)
+           {
+            retrieve_record(resind[0]);
+            return;
+           }
+           else
+           {
+            cout&lt;&lt;"Please choose the candidate's USN : \n";
+            for(i=0;i&lt;k;i++)
+             cout&lt;&lt;"Name : "&lt;&lt;found[i].name&lt;&lt;"  USN  : "&lt;&lt;found[i].usn&lt;&lt;endl;
+           }
+           cin>>chusn;
+           for(i=0;i&lt;k;i++)
+           {
+            if(strcmp(chusn,found[i].usn)==0)
+            {
+             retrieve_record(resind[i]);
+             return;
+            }
+           }
+           cout&lt;&lt;"Invalid Entry !\n"; 
+           return;   
+          }
+          void delete_record(char indx[])
+          {
+           int i,no,flag;
+           fstream file1,file2;
+           no=get_num_records();
+           flag=-1;
+           for(i=0;i&lt;no;i++)
+             {
+                if(strcmp(findex[i],indx)==0)
+                   flag=i;
+             }
+             if(flag==-1)
+             {
+                cout&lt;&lt;"Error !\n";
+                return;
+             }
+            if(flag==(no-1))
+             {
+                no--;
+                cout&lt;&lt;"Deleted !\n";
+             } 
+            else
+            {
+               for(i=flag;i&lt;no;i++)
+               {
+                  stdrec[i]=stdrec[i+1];
+               }
+               no--;
+               cout&lt;&lt;"Deleted !\n";
+            }
+              file1.open("secindex.txt",ios::out);
+               file2.open("record.txt",ios::out);
+               for(i=0;i&lt;no;i++)
+               {
+                  file1&lt;&lt;stdrec[i].name&lt;&lt;"|"&lt;&lt;stdrec[i].usn&lt;&lt;"|"&lt;&lt;i&lt;&lt;"\n";
+                  file2&lt;&lt;i&lt;&lt;"|"&lt;&lt;stdrec[i].usn&lt;&lt;"|"&lt;&lt;stdrec[i].name&lt;&lt;"|"&lt;&lt;stdrec[i].age&lt;&lt;"|"&lt;&lt;stdrec[i].sem&lt;&lt;"|"&lt;&lt;stdrec[i].branch&lt;&lt;"\n";
+               }
+                file2.close();
+                 file1.close();
+                 
+                 return;    
+          }
+          void remove_record()
+          {
+           fstream file;
+           int i,k=0,no;
+           char name[15],usn[5],ind[5],chusn[5],resind[20][5],st_name[15];
+           
+            cout&lt;&lt;"Please enter the name of the student whose record is to be deleted\n";
+               cin>>st_name;
+               
+           file.open("secindex.txt",ios::in);
+           while(! file.eof())
+           {
+            file.getline(name,15,'|');
+            file.getline(usn,5,'|');
+            file.getline(ind,5,'\n');
+            if(strcmp(st_name,name)==0)
+            {
+             strcpy(found[k].name,name);
+             strcpy(found[k].usn,usn);
+             strcpy(resind[k],ind);
+             k++;  
+            }
+           }
+           file.close();
+           if(k==1)
+           {
+            delete_record(resind[0]);
+            return;
+           }
+           else
+           {
+            cout&lt;&lt;"Please choose the candidate's USN : \n";
+            for(i=0;i&lt;k;i++)
+             cout&lt;&lt;"Name : "&lt;&lt;found[i].name&lt;&lt;"  USN  : "&lt;&lt;found[i].usn&lt;&lt;endl;
+           }
+           cin>>chusn;
+           for(i=0;i&lt;k;i++)
+           {
+            if(strcmp(chusn,found[i].usn)==0)
+            {
+             delete_record(resind[i]);
+             return;
+            }
+           }
+           cout&lt;&lt;"Invalid Entry !\n"; 
+           return;   
+          }
+          
+          void sort_records(int no)
+          {
+           int i,j;
+           student  temp;
+            for(i=0;i&lt;no-1;i++)
+            {
+                for(j=0;j&lt;no-i-1;j++)
+              {
+                   if(strcmp(stdrec[j].name,stdrec[j+1].name)>0)
+                   {
+                    temp=stdrec[j];
+                    stdrec[j]=stdrec[j+1];
+                    stdrec[j+1]=temp;
+                   }
+               }
+            }	
+          }
+          void create_indexfile(int no)
+          {
+           fstream file1,file2;
+           int i;
+           file1.open("secindex.txt",ios::out);
+           file2.open("record.txt",ios::out);
+           
+            for(i=0;i&lt;no;i++)
+            {
+              file1&lt;&lt;stdrec[i].name&lt;&lt;"|"&lt;&lt;stdrec[i].usn&lt;&lt;"|"&lt;&lt;i&lt;&lt;"\n";
+                file2&lt;&lt;i&lt;&lt;"|"&lt;&lt;stdrec[i].usn&lt;&lt;"|"&lt;&lt;stdrec[i].name&lt;&lt;"|"&lt;&lt;stdrec[i].age&lt;&lt;"|"&lt;&lt;stdrec[i].sem&lt;&lt;"|"&lt;&lt;stdrec[i].branch&lt;&lt;"\n";
+             }
+          
+            file1.close();
+            file2.close();
+          }
+          
+          void add_records()
+          {	
+             int i,cnt,no;
+            cout&lt;&lt;"\nEnter the no. of students : ";
+            cin>>no;
+            cout&lt;&lt;"\nEnter the details :\n"; 
+            cnt = get_num_records();
+            for(i=cnt;i&lt;(cnt+no);i++)
+               {                  
+              cout&lt;&lt;"\nName : ";
+              cin>>stdrec[i].name;
+              cout&lt;&lt;"\nAge : ";
+              cin>>stdrec[i].age;
+              cout&lt;&lt;"\nUSN : ";
+              cin>>stdrec[i].usn;
+              cout&lt;&lt;"\nSemester : ";
+              cin>>stdrec[i].sem;
+              cout&lt;&lt;"\nBranch : ";
+              cin>>stdrec[i].branch;
+            }
+              sort_records((cnt+no));
+                 create_indexfile((cnt+no));
+          }
+          
+          void display_records()
+          {
+          student s;
+          fstream file;
+          int i=0;
+            file.open("record.txt",ios::in);
+            if(!file)
+            {	
+              cout&lt;&lt;"Error\n";
+              return;	
+            }
+            cout&lt;&lt;"\nUSN\tName\tAge\tSem\tBranch\n";  
+            while(!file.eof())
+            {	
+                file.getline(findex[i],5,'|');
+                file.getline(s.usn,5,'|');
+                file.getline(s.name,15,'|');
+                file.getline(s.age,5,'|');
+                file.getline(s.sem,5,'|');
+                file.getline(s.branch,15,'\n'); 
+          cout&lt;&lt;s.usn&lt;&lt;"\t"&lt;&lt;s.name&lt;&lt;"\t"&lt;&lt;s.age&lt;&lt;"\t"&lt;&lt;s.sem&lt;&lt;"\t"&lt;&lt;s.branch&lt;&lt;"\t"&lt;&lt;endl;
+             }
+            file.close();
+            return;
+          }
+          
+          int main()
+          {
+           int ch;
+           for(;;)
+           {
+              cout&lt;&lt;"Please choose :\n1:Add Record	2:Search Record  3:Delete Record   4:Display Record\n";
+              cin>>ch;
+              switch(ch)
+                  {
+                 case 1:  add_records();      break;
+                 case 2:  search_records();   break;
+               case 3:  remove_record();    break;
+                case 4:  display_records();  break;		
+              default:   cout&lt;&lt;"Invalid choice !\n";	
+                                    exit(0);	 break;
+                  }   
+           }
+          }
+          
+          
+         <h1>CODE 7</h1>
+         <br>
+         
+         #include&lt;iostream&gt;
+        #include&lt;fstream&gt;
+        #include&lt;stdlib.h&gt;
+        #include&lt;string.h&gt;
+          
+          using namespace std;
+          
+          int n,m,flag;
+          class variable
+          {
+            public: void writelist();
+              void match();
+              void display();
+          };
+          
+          void variable::writelist()
+          { 
+            fstream out1,out2;
+              int i;
+              char name[20];
+              out1.open("file1.txt",ios::out|ios::trunc);
+              out2.open("file2.txt",ios::out|ios::trunc);
+              cout&lt;&lt;"\nEnter count of names to be entered in file1: ";
+              cin>>m;
+              if(m>0)
+              cout&lt;&lt;"\nPlease enter names is Alphabetical order\n";
+              else
+              {
+               cout&lt;&lt;"\nInvalid no";
+               exit(0);
+             }
+             for(i=0;i&lt;m;i++)
+             { 
+            cout&lt;&lt;"\nEnter name: ";
+                 cin>>name;
+                 out1&lt;&lt;name&lt;&lt;endl;
+             }
+             cout&lt;&lt;"\nEnter count of names to be entered in file2: ";
+             cin>>n;
+             if(n&lt;=0)
+             {
+              cout&lt;&lt;"\nInvalid no";
+              exit(0);
+             }
+             for(i=0;i&lt;n;i++)
+             {
+               cout&lt;&lt;"\nEnter name: ";  
+               cin>>name;
+               out2&lt;&lt;name&lt;&lt;endl;
+             }
+             out1.close();
+             out2.close();
+          }
+          
+          void variable::match()
+          {
+             char list1[100][20],list2[100][20];
+             int i=0,j=0;
+             fstream in1,in2;
+             in1.open("file1.txt",ios::in);
+             in2.open("file2.txt",ios::in);
+             fstream out1;
+             out1.open("file3.txt",ios::out|ios::trunc);
+             while(i&lt;m)
+             in1.getline(list1[i++],20,'\n');
+             while(j&lt;n)
+             in2.getline(list2[j++],20,'\n');
+             i=j=0;
+             while(i&lt;m && j&lt;n)
+             {
+               if(strcmp(list1[i],list2[j])==0)
+               {
+                 out1&lt;&lt;list1[i]&lt;&lt;endl;
+                 flag=1;
+                 i++;
+                 j++;
+               }
+               else
+               if(strcmp(list1[i],list2[j])&lt;0)
+                 i++;
+               else
+                 j++;
+            }
+               in1.close(); 
+               in2.close(); 
+               out1.close();
+          }
+          
+          void variable::display()
+          {
+            fstream in1;
+            char name[20];
+            in1.open("file3.txt",ios::in);
+            if(flag)
+             {
+              cout&lt;&lt;"\nMatched list\n";
+              while(1)
+              {
+                in1.getline(name,20,'\n');
+                if(in1.eof()) 
+                break;
+                cout&lt;&lt;name&lt;&lt;endl;
+              }
+            }
+            else 
+            cout&lt;&lt;"\nNo matching strings";
+          }
+          
+          int main()
+          {
+            variable v;
+            v.writelist();
+            v.match();
+            v.display();
+            return 0;
+          }
+          
+        <h1>CODE 8</h1>
+        <br>
+        #include&lt;iostream&gt;
+        #include&lt;fstream&gt;
+        #include&lt;stdlib.h&gt;
+        #include&lt;string.h&gt;
+          
+          using namespace std;
+          
+          class record
+          {
+            public: char name[20];
+                char usn[20];
+          }rec[20];
+          
+           int no;
+           fstream file[8];
+          
+           char fname[8][8]={"1.txt","2.txt","3.txt","4.txt","5.txt","6.txt","7.txt","8.txt"};
+          
+           void merge_file(char *file1,char *file2,char *filename)
+           {
+            int k=0;
+            record recrd[50]; 
+            fstream f1,f2;    
+            f1.open(file1,ios::in);
+            f2.open(file2,ios::in);
+            while( !f1.eof() )
+            {
+             f1.getline(recrd[k].name,20,'|');
+             f1.getline(recrd[k++].usn,20,'\n');
+            }
+            while( !f2.eof() )
+            {
+             f2.getline(recrd[k].name,20,'|');
+             f2.getline(recrd[k++].usn,20,'\n');
+            }
+            record temp;
+            int t,y;
+            
+            for(t=0;t&lt;k-2;t++)
+            {
+             for(y=0;y&lt;k-t-2;y++)
+             { 
+               if(strcmp(recrd[y].name,recrd[y+1].name)>0)
+               {
+                temp=recrd[y];
+                recrd[y]=recrd[y+1];
+                recrd[y+1]=temp;
+               }
+             }
+            }
+            fstream temp1;
+            temp1.open(filename,ios::out);
+          
+            for(t=1;t&lt;k-1;t++)
+            temp1&lt;&lt;recrd[t].name&lt;&lt;"|"&lt;&lt;recrd[t].usn&lt;&lt;endl;
+          
+            f1.close();
+            f2.close();
+            temp1.close();
+            return;
+           }
+          
+           void kwaymerge()
+            {
+             char filename[7][20]={"11.txt","22.txt","33.txt","4.txt","111.txt","222.txt","1111.txt"};
+             int i;
+             int k=0;
+             for(i=0;i&lt;8;i+=2)
+             {
+              merge_file(fname[i],fname[i+1],filename[k++]);
+             }
+             k=4;
+             for(i=0;i&lt;4;i+=2)
+             {
+               merge_file(filename[i],filename[i+1],filename[k++]);
+             }
+          
+               merge_file(filename[4],filename[5],filename[6]);
+            }
+          
+            int main()
+            {
+             int i;
+             cout&lt;&lt;"ENter NO. of records:\t";
+             cin>>no;
+             cout&lt;&lt;"\nEnter details:\n";
+             
+            for(i=0;i&lt;8;i++)
+              file[i].open(fname[i],ios::out);
+          
+             for(i=0;i&lt;no;i++)
+              {
+               cout&lt;&lt;"\nENTER NAME :\t";
+               cin>>rec[i].name;
+               cout&lt;&lt;"\nEnter USN :\t";
+               cin>>rec[i].usn;
+               file[i%8]&lt;&lt;rec[i].name&lt;&lt;"|"&lt;&lt;rec[i].usn&lt;&lt;endl;
+              }
+              for(i=0;i&lt;8;i++)
+              file[i].close();
+          
+              kwaymerge();
+          
+              fstream result;
+              result.open("1111.txt",ios::in);
+              cout&lt;&lt;"Sorted records\n";
+              char name1[20],usn1[20];
+              for(i=0;i&lt;no;i++)
+               {
+                result.getline(name1,20,'|');
+                result.getline(usn1,20,'\n');
+                cout&lt;&lt;"NAME :"&lt;&lt;name1&lt;&lt;"\nUSN :"&lt;&lt;usn1&lt;&lt;endl;
+               }
+              return 0;
+             }
+          
+          
+        
+        </code>
+    </pre>
+</body>
+
+</html>
